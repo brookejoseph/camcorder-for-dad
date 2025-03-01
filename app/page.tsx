@@ -16,7 +16,11 @@ export default function CamcorderPage() {
     "3QVAiNeUmC0", 
     "EySQGrDmgvY", 
     "YuDQCs1levE", 
-    "aBC1391qcpg"
+    "aBC1391qcpg", 
+    "mEdsWnxuSMc", 
+    "rmwkTyjUHyk", 
+    "mINCVIf1VnQ", 
+    "VtHXRvQ0Vd0"
   ]
   
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
@@ -29,14 +33,18 @@ export default function CamcorderPage() {
 
   // Video titles mapping
   const videoTitles = {
-    "dQw4w9WgXcQ": "Rick Astley - Never Gonna Give You Up",
-    "9bZkp7q19f0": "PSY - Gangnam Style",
-    "kJQP7kiw5Fk": "Luis Fonsi - Despacito",
-    "OPf0YbXqDm0": "Mark Ronson - Uptown Funk",
-    "JGwWNGJdvx8": "Ed Sheeran - Shape of You",
-    "tt2k8PGm-TI": "XXXTENTACION - Moonlight",
-    "fJ9rUzIMcZQ": "Queen - Bohemian Rhapsody",
-    "pRpeEdMmmQ0": "Coldplay - Viva La Vida"
+    "3w_KOOB9RAM": "Brooke crawling",
+    "NqQZ__TRXHM": "Parker Playing Musics",
+    "y6MI5zHPwQI": "First Signs of Brooke being Bossy",
+    "Uhg-wx3eEYE": "Long day of Skiiing",
+    "3QVAiNeUmC0": "Magic Tricks",
+    "EySQGrDmgvY-TI": "Parker and Jake",
+    "YuDQCs1levE": "Bobby D's!!",
+    "aBC1391qcpg": "WHERE IS MY CANDY?!?!", 
+    "mEdsWnxuSMc": "CAKE BABYYY", 
+    "rmwkTyjUHyk": "Some good dancing skills", 
+    "mINCVIf1VnQ": "Is that Jesus?", 
+    "VtHXRvQ0Vd0": "Brooke and Parker"
   }
 
   const togglePlay = () => {
@@ -245,7 +253,8 @@ export default function CamcorderPage() {
       </div>
 
       <div className="mt-8 text-gray-400 text-sm max-w-md text-center">
-        Happy Birthday Dad! I love you. Thank you for everything you do for me. Hope you have a great day.  
+        Happy Birthday Dad! I love you. Thank you for everything you do for us. We all love you so much.
+        From Brooke, Mom and Parker.
       </div>
     </div>
   )
