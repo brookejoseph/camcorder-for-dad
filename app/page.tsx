@@ -3,32 +3,40 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Power, Play, Pause, RotateCcw, Volume2, VolumeX, Battery, Disc } from "lucide-react"
+import { Power, Play, Pause, RotateCcw, Volume2, VolumeX, Battery, Disc, SkipForward } from "lucide-react"
 
 export default function CamcorderPage() {
-  const [videoUrl, setVideoUrl] = useState("")
+  // Fixed list of YouTube video IDs
+  const videoList = [
+    "3w_KOOB9RAM", 
+    "NqQZ__TRXHM", 
+    "y6MI5zHPwQI", 
+    "Uhg-wx3eEYE", 
+    "3QVAiNeUmC0", 
+    "EySQGrDmgvY", 
+    "YuDQCs1levE", 
+    "aBC1391qcpg"
+  ]
+  
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const [videoId, setVideoId] = useState("")
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isPoweredOn, setIsPoweredOn] = useState(true)
   const [batteryLevel, setBatteryLevel] = useState(85)
+  const [videoTitle, setVideoTitle] = useState("Movie Collection")
 
-  // Extract YouTube video ID from URL
-  const extractVideoId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-    const match = url.match(regExp)
-    return match && match[2].length === 11 ? match[2] : null
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const id = extractVideoId(videoUrl)
-    if (id) {
-      setVideoId(id)
-      setIsPlaying(true)
-    }
+  // Video titles mapping
+  const videoTitles = {
+    "dQw4w9WgXcQ": "Rick Astley - Never Gonna Give You Up",
+    "9bZkp7q19f0": "PSY - Gangnam Style",
+    "kJQP7kiw5Fk": "Luis Fonsi - Despacito",
+    "OPf0YbXqDm0": "Mark Ronson - Uptown Funk",
+    "JGwWNGJdvx8": "Ed Sheeran - Shape of You",
+    "tt2k8PGm-TI": "XXXTENTACION - Moonlight",
+    "fJ9rUzIMcZQ": "Queen - Bohemian Rhapsody",
+    "pRpeEdMmmQ0": "Coldplay - Viva La Vida"
   }
 
   const togglePlay = () => {
@@ -43,8 +51,30 @@ export default function CamcorderPage() {
     setIsPoweredOn(!isPoweredOn)
     if (isPoweredOn) {
       setIsPlaying(false)
+    } else {
+      // If turning on, set the current video
+      setVideoId(videoList[currentVideoIndex])
+      setVideoTitle(videoTitles[videoList[currentVideoIndex]])
     }
   }
+
+  const nextVideo = () => {
+    const nextIndex = (currentVideoIndex + 1) % videoList.length
+    setCurrentVideoIndex(nextIndex)
+    setVideoId(videoList[nextIndex])
+    setVideoTitle(videoTitles[videoList[nextIndex]])
+  }
+
+  // Auto-cycle to next video when current one ends (after 30 seconds for demo)
+  useEffect(() => {
+    let timer
+    if (isPoweredOn && isPlaying) {
+      timer = setTimeout(() => {
+        nextVideo()
+      }, 30000) // Change to next video after 30 seconds
+    }
+    return () => clearTimeout(timer)
+  }, [currentVideoIndex, isPoweredOn, isPlaying])
 
   // Simulate battery drain
   useEffect(() => {
@@ -63,12 +93,13 @@ export default function CamcorderPage() {
     }
   }, [isPoweredOn, isPlaying])
 
-  // Default video if none provided
+  // Set default video on first load
   useEffect(() => {
-    if (!videoId && isPoweredOn) {
-      setVideoId("dQw4w9WgXcQ") // Default video
+    if (isPoweredOn && !videoId) {
+      setVideoId(videoList[currentVideoIndex])
+      setVideoTitle(videoTitles[videoList[currentVideoIndex]])
     }
-  }, [videoId, isPoweredOn])
+  }, [isPoweredOn])
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4">
@@ -124,20 +155,11 @@ export default function CamcorderPage() {
                 <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-2 h-16 bg-gray-700 rounded-l"></div>
               </div>
 
-              {/* URL input form */}
-              <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="Paste YouTube URL"
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  className="bg-gray-700 text-white border-gray-600"
-                  disabled={!isPoweredOn}
-                />
-                <Button type="submit" variant="secondary" disabled={!isPoweredOn}>
-                  Load
-                </Button>
-              </form>
+              {/* Current movie title */}
+              <div className="mt-4 bg-gray-700 rounded p-2 text-white text-center">
+                <div className="text-sm font-semibold">Now Playing ({currentVideoIndex + 1}/{videoList.length}):</div>
+                <div className="text-xs truncate">{videoTitle}</div>
+              </div>
             </div>
 
             {/* Right side - Controls */}
@@ -189,11 +211,11 @@ export default function CamcorderPage() {
                 <Button
                   variant="outline"
                   className="bg-gray-600 hover:bg-gray-500 col-span-2"
-                  onClick={() => setVideoId("")}
+                  onClick={nextVideo}
                   disabled={!isPoweredOn}
                 >
-                  <RotateCcw className="mr-1 h-4 w-4" />
-                  Reset
+                  <SkipForward className="mr-1 h-4 w-4" />
+                  Next Video
                 </Button>
               </div>
 
@@ -223,10 +245,8 @@ export default function CamcorderPage() {
       </div>
 
       <div className="mt-8 text-gray-400 text-sm max-w-md text-center">
-        Enter a YouTube URL and click "Load" to play the video in the camcorder. Use the controls to play/pause,
-        mute/unmute, or reset the video.
+        Happy Birthday Dad! I love you. Thank you for everything you do for me. Hope you have a great day.  
       </div>
     </div>
   )
 }
-
